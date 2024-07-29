@@ -10,11 +10,11 @@ const AuthLayout = () => {
 			<AuthProvider>
 				<div className={"md-[160px] w-full md:mb-0 md:flex"}>
 					<TopBar />
-					<section className="flex h-screen flex-1">
+					<section className="flex h-screen flex-1 pb-[120px] md:pb-0">
 						<Outlet />
 					</section>
+					<BottomBar />
 				</div>
-				<BottomBar />
 			</AuthProvider>
 		</Suspense>
 	);
