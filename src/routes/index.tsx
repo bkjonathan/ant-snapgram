@@ -3,6 +3,7 @@ import AuthLayout from "./layouts/AuthLayout.tsx";
 import GuestLayout from "./layouts/GuestLayout.tsx";
 import SignInPage from "./pages/guest/SignInPage.tsx";
 import SignUpPage from "./pages/guest/SignUpPage.tsx";
+import HomePage from "./pages/auth/HomePage.tsx";
 
 const routes: RouteObject[] = [
 	{
@@ -11,7 +12,7 @@ const routes: RouteObject[] = [
 		children: [
 			{
 				path: "/",
-				element: <div>Home</div>,
+				element: <HomePage />,
 			},
 		],
 	},

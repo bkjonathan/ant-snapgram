@@ -32,13 +32,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 		}
 	};
 	const navigate = useNavigate();
+
 	useEffect(() => {
-		const token = localStorage.getItem("token");
-		if (token) {
-			setIsAuthenticated(true);
-		} else {
-			navigate("/sign-in");
-		}
+		// const token = localStorage.getItem("token");
+		// if (token) {
+		// 	setIsAuthenticated(true);
+		// } else {
+		// 	navigate("/sign-in");
+		// }
 		checkAuthUser();
 	}, []);
 	return (
