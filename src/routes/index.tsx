@@ -1,6 +1,8 @@
 import { RouteObject } from "react-router-dom";
 import AuthLayout from "./layouts/AuthLayout.tsx";
 import GuestLayout from "./layouts/GuestLayout.tsx";
+import SignInPage from "./pages/guest/SignInPage.tsx";
+import SignUpPage from "./pages/guest/SignUpPage.tsx";
 
 const routes: RouteObject[] = [
 	{
@@ -19,7 +21,11 @@ const routes: RouteObject[] = [
 		children: [
 			{
 				path: "/sign-in",
-				element: <div>Sign In</div>,
+				element: <SignInPage />,
+			},
+			{
+				path: "/sign-up",
+				element: <SignUpPage />,
 			},
 		],
 	},
