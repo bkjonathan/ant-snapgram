@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import AuthProvider from "../../providers/AuthProvider.tsx";
 import { Outlet } from "react-router-dom";
 import TopBar from "../../components/shared/TopBar.tsx";
+import BottomBar from "../../components/shared/BottomBar.tsx";
 
 const AuthLayout = () => {
 	return (
@@ -13,6 +14,7 @@ const AuthLayout = () => {
 						<Outlet />
 					</section>
 				</div>
+				<BottomBar />
 			</AuthProvider>
 		</Suspense>
 	);

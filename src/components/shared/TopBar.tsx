@@ -4,7 +4,7 @@ import { Button } from "antd";
 
 const TopBar: FC = () => {
 	return (
-		<section className={"sticky top-0 z-50 w-full bg-dark-2 md:hidden"}>
+		<section className={"top-bar"}>
 			<div className={"flex items-center justify-between px-5 py-4"}>
 				<Link to="/">
 					<img

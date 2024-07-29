@@ -4,6 +4,7 @@ import GuestLayout from "./layouts/GuestLayout.tsx";
 import SignInPage from "./pages/guest/SignInPage.tsx";
 import SignUpPage from "./pages/guest/SignUpPage.tsx";
 import HomePage from "./pages/auth/HomePage.tsx";
+import CreatePage from "./pages/auth/CreatePage.tsx";
 
 const routes: RouteObject[] = [
 	{
@@ -13,6 +14,10 @@ const routes: RouteObject[] = [
 			{
 				path: "/",
 				element: <HomePage />,
+			},
+			{
+				path: "/create",
+				element: <CreatePage />,
 			},
 		],
 	},
