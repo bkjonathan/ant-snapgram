@@ -144,3 +144,14 @@
   }
 
 }
+
+.cool-input {
+  border-radius: 8px;
+  padding: 10px 15px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.cool-input:focus {
+  box-shadow: 0 0 10px rgba(92, 92, 123, 0.5);
+  outline: none;
+}

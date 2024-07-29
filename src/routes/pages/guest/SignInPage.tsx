@@ -4,9 +4,8 @@ import { Button, Form, Input } from "antd";
 import { Link } from "react-router-dom";
 
 type FieldType = {
-	username?: string;
+	email?: string;
 	password?: string;
-	remember?: string;
 };
 
 const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
@@ -24,7 +23,7 @@ const SignInPage: FC = () => {
 			<h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">
 				Sign in to your account
 			</h2>
-			<p className="text-light-3 small-medium md:base-regular mb-6">
+			<p className="small-medium md:base-regular mb-6 text-light-3">
 				Welcome back! Please enter your details
 			</p>
 			<Form
@@ -36,30 +35,42 @@ const SignInPage: FC = () => {
 				className={"max-w-3xl"}
 				autoComplete="off">
 				<Form.Item<FieldType>
-					label="Username"
-					name="username"
-					rules={[{ required: true, message: "Please input your username!" }]}>
-					<Input />
+					label="Email"
+					name="email"
+					rules={[{ required: true, message: "Please input your email!" }]}>
+					<Input
+						className="cool-input"
+						type="email"
+						placeholder="Email Address"
+						autoComplete="off"
+					/>
 				</Form.Item>
 
 				<Form.Item<FieldType>
 					label="Password"
 					name="password"
 					rules={[{ required: true, message: "Please input your password!" }]}>
-					<Input.Password />
+					<Input.Password
+						className="cool-input"
+						placeholder="Enter Password"
+						autoComplete="off"
+					/>
 				</Form.Item>
 
 				<Form.Item className={"text-center"}>
-					<Button type="primary" htmlType="submit" className={"w-full"}>
+					<Button
+						type="primary"
+						htmlType="submit"
+						className={"h-[40px] w-full"}>
 						Sign In
 					</Button>
 				</Form.Item>
 
-				<p className="text-small-regular text-light-3 mt-2 text-center">
+				<p className="text-small-regular mt-2 text-center text-light-3">
 					Don't have an account?{" "}
 					<Link
 						to="/sign-up"
-						className="text-primary-500 text-small-semibold ml-1">
+						className="text-small-semibold ml-1 text-primary-500">
 						Sign up
 					</Link>
 				</p>

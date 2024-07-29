@@ -2,7 +2,7 @@ const PostStats = ({ post, userId }: any) => {
 	console.log(post);
 	console.log(userId);
 	return (
-		<div className={`flex-between z-20 pt-3`}>
+		<div className={`flex-between z-20 px-3`}>
 			<div className="mr-5 flex gap-2">
 				<img
 					src={`/assets/icons/like.svg`}
