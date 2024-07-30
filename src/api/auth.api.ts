@@ -1,9 +1,10 @@
 import { INewUser } from "../types";
-import { ID } from "appwrite";
+import { ID, Query } from "appwrite";
 import { account, avatars, database } from "./appwrite.ts";
 import { appWriteConfig } from "../config";
+import { ISignInUser } from "../types/user.type.ts";
 
-export async function createUserAccount(user: INewUser) {
+export async function createUser(user: INewUser) {
 	try {
 		const newAccount = await account.create(
 			ID.unique(),
@@ -28,6 +29,41 @@ export async function createUserAccount(user: INewUser) {
 		);
 	} catch (error) {
 		console.error("Error creating user account:", error);
-		throw error;
+		throw new Error("Failed to create user account");
+	}
+}
+
+export async function signInAccount(user: ISignInUser) {
+	try {
+		return await account.createEmailPasswordSession(user.email, user.password);
+	} catch (error) {
+		console.error("Error signing in:", error);
+		throw new Error("Failed to sign in");
+	}
+}
+
+export async function getCurrentUser() {
+	try {
+		const currentAccount = await account.get();
+
+		console.log({ currentAccount }, "from auth provider");
+
+		if (!currentAccount) {
+			throw new Error("No user found");
+		}
+		const currentUser = await database.listDocuments(
+			appWriteConfig.databaseId,
+			appWriteConfig.userCollectionId,
+			[Query.equal("accountId", currentAccount.$id)],
+		);
+
+		console.log({ currentUser }, "from auth provider");
+		if (!currentUser?.documents.length) {
+			throw new Error("User not found in database");
+		}
+		return currentUser.documents[0];
+	} catch (error) {
+		console.error("Error getting current user:", error);
+		throw new Error("Failed to get current user");
 	}
 }

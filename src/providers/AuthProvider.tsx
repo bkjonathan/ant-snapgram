@@ -6,44 +6,63 @@ import {
 	useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import { getCurrentUser } from "../api/auth.api.ts";
+import { IUser } from "../types";
+import { AUTH_INIT_STATE, INIT_USER } from "../constants";
+import { IAuthContextType } from "../types/user.type.ts";
 
-type IAuthContext = {
-	isAuthenticated: boolean;
-	isLoading: boolean;
-};
-
-export const AuthContext = createContext<Partial<IAuthContext>>({
-	isAuthenticated: false,
-	isLoading: false,
-});
+export const AuthContext = createContext<IAuthContextType>(AUTH_INIT_STATE);
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
+	const [user, setUser] = useState<IUser>(INIT_USER);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const navigate = useNavigate();
 
 	const checkAuthUser = async () => {
 		try {
 			setIsLoading(true);
-			console.log("Checking user authentication...");
+			const currentAccount = await getCurrentUser();
+
+			if (currentAccount) {
+				const { $id, name, username, email, imageUrl, bio } = currentAccount;
+				setUser({
+					id: $id,
+					name,
+					username,
+					email,
+					imageUrl,
+					bio,
+				});
+				setIsAuthenticated(true);
+				return true;
+			}
+			return false;
 		} catch (e) {
 			console.error("Error checking user authentication:", e);
+			return false;
 		} finally {
 			setIsLoading(false);
 		}
 	};
-	const navigate = useNavigate();
-
 	useEffect(() => {
-		// const token = localStorage.getItem("token");
-		// if (token) {
-		// 	setIsAuthenticated(true);
-		// } else {
-		// 	navigate("/sign-in");
-		// }
-		checkAuthUser();
+		const cookieFallback = localStorage.getItem("cookieFallback");
+		if (!cookieFallback || cookieFallback === "[]") {
+			navigate("/sign-in");
+		} else {
+			checkAuthUser();
+		}
 	}, []);
 	return (
-		<AuthContext.Provider value={{ isAuthenticated, isLoading }}>
+		<AuthContext.Provider
+			value={{
+				isAuthenticated,
+				isLoading,
+				user,
+				setUser,
+				setIsAuthenticated,
+				checkAuthUser,
+			}}>
 			{children}
 		</AuthContext.Provider>
 	);

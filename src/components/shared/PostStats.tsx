@@ -1,6 +1,5 @@
 const PostStats = ({ post, userId }: any) => {
-	console.log(post);
-	console.log(userId);
+	console.log(post, userId);
 	return (
 		<div className={`flex-between z-20 px-3`}>
 			<div className="mr-5 flex gap-2">

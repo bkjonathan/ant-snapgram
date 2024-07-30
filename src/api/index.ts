@@ -1,3 +1,3 @@
-import { createUserAccount } from "./auth.api";
+import { createUser } from "./auth.api";
 
-export { createUserAccount };
+export { createUser };

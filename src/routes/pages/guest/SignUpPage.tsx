@@ -1,23 +1,55 @@
 import { FC } from "react";
 import { Button, Form, FormProps, Input } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useCreateUser, useSignIn } from "../../../queries";
+import { INewUser } from "../../../types";
+import { useNotification } from "../../../providers";
+import {
+	SIGN_IN_NOTIFICATION_OPTIONS,
+	SIGN_UP_NOTIFICATION_OPTIONS,
+} from "../../../constants";
+import { useAuth } from "../../../providers/AuthProvider.tsx";
+import { Loader } from "../../../components";
 
-type FieldType = {
-	name?: string;
-	username?: string;
-	email?: string;
-	password?: string;
-};
-
-const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-	console.log("Success:", values);
-};
-
-const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
+const onFinishFailed: FormProps<INewUser>["onFinishFailed"] = (errorInfo) => {
 	console.log("Failed:", errorInfo);
 };
 
 const SignUpPage: FC = () => {
+	const { mutateAsync: createUser, isPending: isCreating } = useCreateUser();
+	const { mutateAsync: signIn, isPending: isSignIn } = useSignIn();
+	const navigate = useNavigate();
+	const [form] = Form.useForm();
+
+	const { checkAuthUser } = useAuth();
+	const api = useNotification();
+
+	const onFinish: FormProps<INewUser>["onFinish"] = async (
+		values: INewUser,
+	) => {
+		const newUser = await createUser(values);
+		if (!newUser) {
+			return api?.open(SIGN_UP_NOTIFICATION_OPTIONS);
+		}
+
+		const session = await signIn({
+			email: values.email,
+			password: values.password,
+		});
+		if (!session) {
+			return api?.open(SIGN_UP_NOTIFICATION_OPTIONS);
+		}
+
+		const isLoggedIn = await checkAuthUser();
+		console.log("isLoggedIn", isLoggedIn);
+		if (isLoggedIn) {
+			console.log("isLoggedIn", isLoggedIn);
+			form.resetFields();
+			navigate("/");
+			return api?.open(SIGN_IN_NOTIFICATION_OPTIONS);
+		}
+	};
+
 	return (
 		<>
 			<img src="/assets/images/logoBlack.svg" alt="logo" />
@@ -26,6 +58,7 @@ const SignUpPage: FC = () => {
 				To use Snapgram, please enter your details
 			</p>
 			<Form
+				form={form}
 				name="basic"
 				labelCol={{ span: 24 }}
 				initialValues={{ remember: true }}
@@ -33,7 +66,7 @@ const SignUpPage: FC = () => {
 				onFinishFailed={onFinishFailed}
 				className={"max-w-3xl"}
 				autoComplete="off">
-				<Form.Item<FieldType>
+				<Form.Item<INewUser>
 					label="Name"
 					name="name"
 					rules={[{ required: true, message: "Please input your name!" }]}>
@@ -44,7 +77,7 @@ const SignUpPage: FC = () => {
 					/>
 				</Form.Item>
 
-				<Form.Item<FieldType>
+				<Form.Item<INewUser>
 					label="Username"
 					name="username"
 					rules={[{ required: true, message: "Please input your username!" }]}>
@@ -56,7 +89,7 @@ const SignUpPage: FC = () => {
 					/>
 				</Form.Item>
 
-				<Form.Item<FieldType>
+				<Form.Item<INewUser>
 					label="Email Address"
 					name="email"
 					rules={[{ required: true, message: "Please input your email!" }]}>
@@ -68,7 +101,7 @@ const SignUpPage: FC = () => {
 					/>
 				</Form.Item>
 
-				<Form.Item<FieldType>
+				<Form.Item<INewUser>
 					label="Password"
 					name="password"
 					rules={[{ required: true, message: "Please input your password!" }]}>
@@ -84,7 +117,13 @@ const SignUpPage: FC = () => {
 						type="primary"
 						htmlType="submit"
 						className={"h-[40px] w-full"}>
-						Sign Up
+						{isCreating || isSignIn ? (
+							<div className="flex-center gap-2">
+								<Loader />
+							</div>
+						) : (
+							"Sign Up"
+						)}
 					</Button>
 				</Form.Item>
 
