@@ -13,6 +13,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const navigate = useNavigate();
 
 	const checkAuthUser = async () => {
+		console.log("checkAuthUser method is calling");
 		try {
 			let result = false;
 			setIsLoading(true);

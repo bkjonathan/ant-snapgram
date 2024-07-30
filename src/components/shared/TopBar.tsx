@@ -1,8 +1,20 @@
-import { FC } from "react";
-import { Link } from "react-router-dom";
+import { FC, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "antd";
+import { useSignOut } from "@/queries/auth.query.ts";
+import { useAuth } from "@/hooks";
 
 const TopBar: FC = () => {
+	const { mutate: signOut, isSuccess } = useSignOut();
+	const navigate = useNavigate();
+	const { user } = useAuth();
+
+	useEffect(() => {
+		if (isSuccess) {
+			navigate(0);
+		}
+	}, [isSuccess]);
+
 	return (
 		<section className={"top-bar"}>
 			<div className={"flex items-center justify-between px-5 py-4"}>
@@ -16,7 +28,7 @@ const TopBar: FC = () => {
 				</Link>
 
 				<div className={"flex gap-4"}>
-					<Button className={"border-none bg-dark-3"}>
+					<Button className={"border-none bg-dark-3"} onClick={() => signOut()}>
 						<img
 							src="/assets/icons/logout.svg"
 							alt="plus"
@@ -25,9 +37,9 @@ const TopBar: FC = () => {
 						/>
 					</Button>
 
-					<Link to={`/profile/id}`} className="flex-center">
+					<Link to={`/profile/${user.id}`} className="flex-center">
 						<img
-							src="/assets/images/profile.png"
+							src={user.imageUrl || "/assets/images/profile-placeholder.svg"}
 							alt="profile"
 							className="h-8 w-8 rounded-full"
 						/>
