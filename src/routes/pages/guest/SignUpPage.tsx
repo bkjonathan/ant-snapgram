@@ -11,45 +11,43 @@ import {
 import { useAuth } from "../../../providers/AuthProvider.tsx";
 import { Loader } from "../../../components";
 
-const onFinishFailed: FormProps<INewUser>["onFinishFailed"] = (errorInfo) => {
-	console.log("Failed:", errorInfo);
-};
+// const onFinishFailed: FormProps<INewUser>["onFinishFailed"] = (errorInfo) => {
+// 	console.log("Failed:", errorInfo);
+// };
 
 const SignUpPage: FC = () => {
 	const { mutateAsync: createUser, isPending: isCreating } = useCreateUser();
 	const { mutateAsync: signIn, isPending: isSignIn } = useSignIn();
 	const navigate = useNavigate();
 	const [form] = Form.useForm();
-
 	const { checkAuthUser } = useAuth();
 	const api = useNotification();
 
 	const onFinish: FormProps<INewUser>["onFinish"] = async (
 		values: INewUser,
 	) => {
-		const newUser = await createUser(values);
-		if (!newUser) {
-			return api?.open(SIGN_UP_NOTIFICATION_OPTIONS);
-		}
+		try {
+			const newUser = await createUser(values);
+			if (!newUser) throw new Error("User creation failed");
 
-		const session = await signIn({
-			email: values.email,
-			password: values.password,
-		});
-		if (!session) {
-			return api?.open(SIGN_UP_NOTIFICATION_OPTIONS);
-		}
+			const session = await signIn({
+				email: values.email,
+				password: values.password,
+			});
+			if (!session) throw new Error("Sign in failed");
 
-		const isLoggedIn = await checkAuthUser();
-		console.log("isLoggedIn", isLoggedIn);
-		if (isLoggedIn) {
-			console.log("isLoggedIn", isLoggedIn);
-			form.resetFields();
-			navigate("/");
-			return api?.open(SIGN_IN_NOTIFICATION_OPTIONS);
+			const isLoggedIn = await checkAuthUser();
+			if (isLoggedIn) {
+				form.resetFields();
+				navigate("/");
+				api?.open(SIGN_IN_NOTIFICATION_OPTIONS);
+			}
+		} catch (error) {
+			console.error(error);
+			api?.open(SIGN_UP_NOTIFICATION_OPTIONS);
 		}
 	};
-
+	const isLoading = isCreating || isSignIn;
 	return (
 		<>
 			<img src="/assets/images/logoBlack.svg" alt="logo" />
@@ -61,9 +59,7 @@ const SignUpPage: FC = () => {
 				form={form}
 				name="basic"
 				labelCol={{ span: 24 }}
-				initialValues={{ remember: true }}
 				onFinish={onFinish}
-				onFinishFailed={onFinishFailed}
 				className={"max-w-3xl"}
 				autoComplete="off">
 				<Form.Item<INewUser>
@@ -117,7 +113,7 @@ const SignUpPage: FC = () => {
 						type="primary"
 						htmlType="submit"
 						className={"h-[40px] w-full"}>
-						{isCreating || isSignIn ? (
+						{isLoading ? (
 							<div className="flex-center gap-2">
 								<Loader />
 							</div>

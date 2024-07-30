@@ -21,6 +21,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 	const checkAuthUser = async () => {
 		try {
+			let result = false;
 			setIsLoading(true);
 			const currentAccount = await getCurrentUser();
 
@@ -35,9 +36,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 					bio,
 				});
 				setIsAuthenticated(true);
-				return true;
+				result = true;
 			}
-			return false;
+			console.log(result, "result from auth provider");
+			return result;
 		} catch (e) {
 			console.error("Error checking user authentication:", e);
 			return false;
