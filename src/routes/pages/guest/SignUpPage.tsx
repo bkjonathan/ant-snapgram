@@ -1,15 +1,14 @@
 import { FC } from "react";
 import { Button, Form, FormProps, Input } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { useCreateUser, useSignIn } from "../../../queries";
-import { INewUser } from "../../../types";
-import { useNotification } from "../../../providers";
+import { useCreateUser, useSignIn } from "@/queries";
+import { INewUser } from "@/types";
 import {
 	SIGN_IN_NOTIFICATION_OPTIONS,
 	SIGN_UP_NOTIFICATION_OPTIONS,
-} from "../../../constants";
-import { useAuth } from "../../../providers/AuthProvider.tsx";
-import { Loader } from "../../../components";
+} from "@/constants";
+import { Loader } from "@/components";
+import { useAuth, useNotification } from "@/hooks";
 
 // const onFinishFailed: FormProps<INewUser>["onFinishFailed"] = (errorInfo) => {
 // 	console.log("Failed:", errorInfo);

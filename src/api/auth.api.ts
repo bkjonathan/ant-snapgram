@@ -1,8 +1,8 @@
-import { INewUser } from "../types";
+import { INewUser } from "@/types";
 import { ID, Query } from "appwrite";
 import { account, avatars, database } from "./appwrite.ts";
-import { appWriteConfig } from "../config";
-import { ISignInUser } from "../types/user.type.ts";
+import { appWriteConfig } from "@/config";
+import { ISignInUser } from "@/types";
 
 export async function createUser(user: INewUser) {
 	try {
@@ -65,5 +65,14 @@ export async function getCurrentUser() {
 	} catch (error) {
 		console.error("Error getting current user:", error);
 		throw new Error("Failed to get current user");
+	}
+}
+
+export async function signOut() {
+	try {
+		return await account.deleteSession("current");
+	} catch (error) {
+		console.error("Error signing out:", error);
+		throw error;
 	}
 }

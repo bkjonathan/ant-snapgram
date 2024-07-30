@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { NAV_LISTS } from "../../constants/bottomNavList.tsx";
+import { NAV_LISTS } from "@/constants";
 
 const BottomBar = () => {
 	const { pathname } = useLocation();

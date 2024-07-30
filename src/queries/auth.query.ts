@@ -1,8 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { INewUser } from "../types";
-import { createUser } from "../api";
-import { ISignInUser } from "../types/user.type.ts";
-import { signInAccount } from "../api/auth.api.ts";
+import { createUser, signInAccount } from "@/api";
+import { INewUser, ISignInUser } from "@/types";
 
 export const useCreateUser = () => {
 	return useMutation({

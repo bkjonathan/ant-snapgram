@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { formatRelativeTime } from "../../utils";
+import { formatRelativeTime } from "@/utils";
 import PostStats from "./PostStats.tsx";
 
 const PostCard = ({ post }: any) => {

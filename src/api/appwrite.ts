@@ -1,5 +1,5 @@
 import { Account, Avatars, Client, Databases, Storage } from "appwrite";
-import { appWriteConfig } from "../config";
+import { appWriteConfig } from "@/config";
 
 export const client = new Client();
 client.setProject(appWriteConfig.projectId);

@@ -1,10 +1,12 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode } from "react";
 import { notification } from "antd";
 import { NotificationInstance } from "antd/es/notification/interface";
 
-const NotificationContext = createContext<NotificationInstance | null>(null);
+export const NotificationContext = createContext<NotificationInstance | null>(
+	null,
+);
 
-export const NotificationProvider = ({ children }: { children: ReactNode }) => {
+const NotificationProvider = ({ children }: { children: ReactNode }) => {
 	const [api, contextHolder] = notification.useNotification();
 
 	return (
@@ -15,4 +17,4 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 	);
 };
 
-export const useNotification = () => useContext(NotificationContext);
+export default NotificationProvider;

@@ -1,4 +1,4 @@
-import { IAuthContextType } from "../types/user.type.ts";
+import { IAuthContextType } from "@/types";
 
 export const INIT_USER = {
 	id: "",

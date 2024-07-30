@@ -1,3 +1,9 @@
-import { IUser, INewUser } from "./user.type.ts";
+import {
+	IUser,
+	INewUser,
+	ISignInUser,
+	IUpdateUser,
+	IAuthContextType,
+} from "./user.type.ts";
 
-export type { IUser, INewUser };
+export type { IUser, INewUser, ISignInUser, IUpdateUser, IAuthContextType };

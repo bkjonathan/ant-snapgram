@@ -1,3 +1,3 @@
-import { createUser } from "./auth.api";
+import { createUser, signInAccount, getCurrentUser, signOut } from "./auth.api";
 
-export { createUser };
+export { createUser, signInAccount, getCurrentUser, signOut };

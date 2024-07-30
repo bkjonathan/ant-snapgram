@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { NotificationProvider } from "../../providers";
+import { NotificationProvider } from "@/providers";
 
 const GuestLayout = () => {
 	return (

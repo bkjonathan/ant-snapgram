@@ -1,5 +1,5 @@
-import PostCard from "../../../components/shared/PostCard.tsx";
-import { mockPosts } from "../../../constants";
+import { mockPosts } from "@/constants";
+import { PostCard } from "@/components";
 
 const HomePage = () => {
 	return (

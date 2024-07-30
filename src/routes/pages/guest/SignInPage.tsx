@@ -1,22 +1,41 @@
 import { FC } from "react";
 import type { FormProps } from "antd";
 import { Button, Form, Input } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSignIn } from "@/queries";
+import { ISignInUser } from "@/types";
+import { Loader } from "@/components";
+import { useAuth } from "@/hooks";
 
-type FieldType = {
-	email?: string;
-	password?: string;
-};
-
-const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-	console.log("Success:", values);
-};
-
-const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
+const onFinishFailed: FormProps<ISignInUser>["onFinishFailed"] = (
+	errorInfo,
+) => {
 	console.log("Failed:", errorInfo);
 };
 
 const SignInPage: FC = () => {
+	const navigate = useNavigate();
+	const { checkAuthUser } = useAuth();
+	const { mutateAsync: signInAccount, isPending } = useSignIn();
+
+	const onFinish: FormProps<ISignInUser>["onFinish"] = async (values) => {
+		const session = await signInAccount({
+			email: values.email,
+			password: values.password,
+		});
+		if (!session) throw new Error("User creation failed");
+		const isLoggedIn = await checkAuthUser();
+		navigate("/");
+		console.log(isLoggedIn, "from");
+		if (isLoggedIn) {
+			// form.reset();
+			navigate("/");
+			// return toast({
+			//   title: "Welcome to Snapgram!",
+			// });
+		}
+	};
+
 	return (
 		<>
 			<img src="/assets/images/logoBlack.svg" alt="logo" />
@@ -34,7 +53,7 @@ const SignInPage: FC = () => {
 				onFinishFailed={onFinishFailed}
 				className={"max-w-3xl"}
 				autoComplete="off">
-				<Form.Item<FieldType>
+				<Form.Item<ISignInUser>
 					label="Email"
 					name="email"
 					rules={[{ required: true, message: "Please input your email!" }]}>
@@ -46,7 +65,7 @@ const SignInPage: FC = () => {
 					/>
 				</Form.Item>
 
-				<Form.Item<FieldType>
+				<Form.Item<ISignInUser>
 					label="Password"
 					name="password"
 					rules={[{ required: true, message: "Please input your password!" }]}>
@@ -62,7 +81,13 @@ const SignInPage: FC = () => {
 						type="primary"
 						htmlType="submit"
 						className={"h-[40px] w-full"}>
-						Sign In
+						{isPending ? (
+							<div className="flex-center gap-2">
+								<Loader />
+							</div>
+						) : (
+							"Sign In"
+						)}
 					</Button>
 				</Form.Item>
 

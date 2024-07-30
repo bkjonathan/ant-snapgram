@@ -1,15 +1,8 @@
-import {
-	createContext,
-	ReactNode,
-	useContext,
-	useEffect,
-	useState,
-} from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser } from "../api/auth.api.ts";
-import { IUser } from "../types";
-import { AUTH_INIT_STATE, INIT_USER } from "../constants";
-import { IAuthContextType } from "../types/user.type.ts";
+import { getCurrentUser } from "@/api";
+import { AUTH_INIT_STATE, INIT_USER } from "@/constants";
+import { IAuthContextType, IUser } from "@/types";
 
 export const AuthContext = createContext<IAuthContextType>(AUTH_INIT_STATE);
 
@@ -71,5 +64,3 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export default AuthProvider;
-
-export const useAuth = () => useContext(AuthContext);
