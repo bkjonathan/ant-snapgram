@@ -7,47 +7,74 @@ import { IAuthContextType, IUser } from "@/types";
 export const AuthContext = createContext<IAuthContextType>(AUTH_INIT_STATE);
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
+	const navigate = useNavigate();
 	const [user, setUser] = useState<IUser>(INIT_USER);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
-	const navigate = useNavigate();
+	const [isLoading, setIsLoading] = useState(true);
 
 	const checkAuthUser = async () => {
-		console.log("checkAuthUser method is calling");
+		// setIsLoading(true);
 		try {
-			let result = false;
-			setIsLoading(true);
 			const currentAccount = await getCurrentUser();
-
 			if (currentAccount) {
-				const { $id, name, username, email, imageUrl, bio } = currentAccount;
 				setUser({
-					id: $id,
-					name,
-					username,
-					email,
-					imageUrl,
-					bio,
+					id: currentAccount.$id,
+					name: currentAccount.name,
+					username: currentAccount.username,
+					email: currentAccount.email,
+					imageUrl: currentAccount.imageUrl,
+					bio: currentAccount.bio,
 				});
 				setIsAuthenticated(true);
-				result = true;
+
+				return true;
 			}
-			console.log(result, "result from auth provider");
-			return result;
-		} catch (e) {
-			console.error("Error checking user authentication:", e);
+
+			return false;
+		} catch (error) {
+			console.error(error);
 			return false;
 		} finally {
 			setIsLoading(false);
 		}
 	};
+
+	// const checkAuthUser = async () => {
+	// 	setIsLoading(true);
+	// 	try {
+	// 		let result = false;
+	//
+	// 		const currentAccount = await getCurrentUser();
+	// 		console.log(currentAccount, "currentAccount from AuthProvider");
+	//
+	// 		if (currentAccount) {
+	// 			const { $id, name, username, email, imageUrl, bio } = currentAccount;
+	// 			setUser({
+	// 				id: $id,
+	// 				name,
+	// 				username,
+	// 				email,
+	// 				imageUrl,
+	// 				bio,
+	// 			});
+	// 			setIsAuthenticated(true);
+	// 			result = true;
+	// 		}
+	// 		return result;
+	// 	} catch (e) {
+	// 		console.error("Error checking user authentication:", e);
+	// 		return false;
+	// 	} finally {
+	// 		setIsLoading(false);
+	// 	}
+	// };
 	useEffect(() => {
 		const cookieFallback = localStorage.getItem("cookieFallback");
 		if (!cookieFallback || cookieFallback === "[]") {
-			navigate("/sign-in");
-		} else {
-			checkAuthUser();
+			setIsLoading(false); // Set loading state to false if no cookieFallback
+			return navigate("/sign-in");
 		}
+		checkAuthUser();
 	}, []);
 	return (
 		<AuthContext.Provider

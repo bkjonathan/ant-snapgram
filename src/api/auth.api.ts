@@ -34,19 +34,12 @@ export async function createUser(user: INewUser) {
 }
 
 export async function signInAccount(user: ISignInUser) {
-	try {
-		return await account.createEmailPasswordSession(user.email, user.password);
-	} catch (error) {
-		console.error("Error signing in:", error);
-		throw new Error("Failed to sign in");
-	}
+	return await account.createEmailPasswordSession(user.email, user.password);
 }
 
 export async function getCurrentUser() {
 	try {
 		const currentAccount = await account.get();
-
-		console.log({ currentAccount }, "from auth provider");
 
 		if (!currentAccount) {
 			throw new Error("No user found");

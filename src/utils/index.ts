@@ -1,3 +1,5 @@
+import { NotificationInstance } from "antd/es/notification/interface";
+
 export function formatRelativeTime(dateString: string): string {
 	const date = new Date(dateString);
 	const now = new Date();
@@ -21,3 +23,24 @@ export function formatRelativeTime(dateString: string): string {
 
 	return "just now";
 }
+
+export const withErrorHandling = <T, Args extends unknown[]>(
+	asyncFunc: (...args: Args) => Promise<T>,
+	api: NotificationInstance | null,
+): ((...args: Args) => Promise<T | void>) => {
+	return async (...args: Args) => {
+		try {
+			return await asyncFunc(...args);
+		} catch (error) {
+			if (error instanceof Error) {
+				api?.open({
+					message: error.message,
+				});
+			} else {
+				api?.open({
+					message: "An unknown error occurred",
+				});
+			}
+		}
+	};
+};

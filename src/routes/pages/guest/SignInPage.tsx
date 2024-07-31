@@ -5,7 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSignIn } from "@/queries";
 import { ISignInUser } from "@/types";
 import { Loader } from "@/components";
-import { useAuth } from "@/hooks";
+import { useAuth, useNotification } from "@/hooks";
+import { SIGN_IN_NOTIFICATION_OPTIONS } from "@/constants";
+import { withErrorHandling } from "@/utils";
 
 const onFinishFailed: FormProps<ISignInUser>["onFinishFailed"] = (
 	errorInfo,
@@ -17,24 +19,50 @@ const SignInPage: FC = () => {
 	const navigate = useNavigate();
 	const { checkAuthUser } = useAuth();
 	const { mutateAsync: signInAccount, isPending } = useSignIn();
-
-	const onFinish: FormProps<ISignInUser>["onFinish"] = async (values) => {
-		const session = await signInAccount({
-			email: values.email,
-			password: values.password,
-		});
-		if (!session) throw new Error("User creation failed");
-		const isLoggedIn = await checkAuthUser();
-		navigate("/");
-		console.log(isLoggedIn, "from");
-		if (isLoggedIn) {
-			// form.reset();
-			navigate("/");
-			// return toast({
-			//   title: "Welcome to Snapgram!",
-			// });
-		}
-	};
+	const [form] = Form.useForm();
+	const api = useNotification();
+	//
+	// const onFinish: FormProps<ISignInUser>["onFinish"] = async (values) => {
+	// 	try {
+	// 		const session = await signInAccount({
+	// 			email: values.email,
+	// 			password: values.password,
+	// 		});
+	// 		if (!session) throw new Error("User creation failed");
+	// 		const isLoggedIn = await checkAuthUser();
+	// 		if (isLoggedIn) {
+	// 			form.resetFields();
+	// 			navigate("/");
+	// 			return api?.open(SIGN_IN_NOTIFICATION_OPTIONS);
+	// 		}
+	// 	} catch (error) {
+	// 		if (error instanceof Error) {
+	// 			api?.open({
+	// 				message: error.message,
+	// 			});
+	// 		} else {
+	// 			api?.open({
+	// 				message: "An unknown error occurred",
+	// 			});
+	// 		}
+	// 	}
+	// };
+	const onFinish: FormProps<ISignInUser>["onFinish"] = withErrorHandling(
+		async (values) => {
+			const session = await signInAccount({
+				email: values.email,
+				password: values.password,
+			});
+			if (!session) throw new Error("User creation failed");
+			const isLoggedIn = await checkAuthUser();
+			if (isLoggedIn) {
+				form.resetFields();
+				navigate("/");
+				return api?.open(SIGN_IN_NOTIFICATION_OPTIONS);
+			}
+		},
+		api,
+	);
 
 	return (
 		<>
@@ -47,6 +75,7 @@ const SignInPage: FC = () => {
 			</p>
 			<Form
 				name="basic"
+				form={form}
 				labelCol={{ span: 24 }}
 				initialValues={{ remember: true }}
 				onFinish={onFinish}
