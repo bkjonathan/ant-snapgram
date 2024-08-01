@@ -1,17 +1,22 @@
-import { mockPosts } from "@/constants";
 import { Loader, PostCard } from "@/components";
-import { useEffect, useState } from "react";
+import { useGetRecentPosts } from "@/queries/post.query.ts";
 
 const HomePage = () => {
-	const [isPostLoading, setIsPostLoading] = useState(true);
+	const {
+		data: posts,
+		isLoading: isPostLoading,
+		isError: isErrorPosts,
+	} = useGetRecentPosts();
 
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			setIsPostLoading(false);
-		}, 2000);
-
-		return () => clearTimeout(timer);
-	}, []);
+	if (isErrorPosts) {
+		return (
+			<div className="flex flex-1">
+				<div className="home-container">
+					<p className="body-medium text-light-1">Something bad happened</p>
+				</div>
+			</div>
+		);
+	}
 	return (
 		<div className="flex flex-1">
 			<div className="home-container">
@@ -22,7 +27,7 @@ const HomePage = () => {
 					) : (
 						<div className="flex-center h-full w-full">
 							<ul className="flex w-full flex-1 flex-col gap-9">
-								{mockPosts.map((post) => (
+								{posts?.documents.map((post) => (
 									<li key={post.$id} className="flex w-full justify-center">
 										<PostCard post={post} />
 									</li>
