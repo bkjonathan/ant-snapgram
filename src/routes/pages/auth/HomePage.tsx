@@ -27,9 +27,6 @@ const HomePage = () => {
 										<PostCard post={post} />
 									</li>
 								))}
-								{/*<li className="flex w-full justify-center">*/}
-								{/*	<PostCard post={mockPost} />*/}
-								{/*</li>*/}
 							</ul>
 						</div>
 					)}

@@ -2,7 +2,7 @@ import { INewPost } from "@/types";
 import { deleteFile, getFilePreview, uploadFile } from "@/api/file.api.ts";
 import { database } from "@/api/appwrite.ts";
 import { appWriteConfig } from "@/config";
-import { ID } from "appwrite";
+import { ID, Query } from "appwrite";
 
 export async function createPost(payload: INewPost) {
 	// Upload file to appwrite storage
@@ -44,4 +44,12 @@ export async function createPost(payload: INewPost) {
 	}
 
 	return newPost;
+}
+
+export async function getRecentPosts() {
+	return await database.listDocuments(
+		appWriteConfig.databaseId,
+		appWriteConfig.postCollectionId,
+		[Query.orderDesc("$createdAt"), Query.limit(10)],
+	);
 }
