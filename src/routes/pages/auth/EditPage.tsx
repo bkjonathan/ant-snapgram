@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { useParams } from "react-router-dom";
-import { useGetPostById } from "@/queries/post.query.ts";
+import { useGetPostById } from "@/queries";
 import { Loader, PostForm } from "@/components";
 
 const EditPage: FC = () => {

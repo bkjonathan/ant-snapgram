@@ -1,9 +1,12 @@
 import { FC, MouseEvent, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Models } from "appwrite";
-import { useLikePost } from "@/queries/post.query.ts";
-import { useGetCurrentUser } from "@/queries/auth.query.ts";
-import { useDeleteSavedPost, useSavePost } from "@/queries/save.query.ts";
+import {
+	useLikePost,
+	useGetCurrentUser,
+	useDeleteSavedPost,
+	useSavePost,
+} from "@/queries";
 
 type PostStatsProps = {
 	post: Models.Document;
@@ -16,7 +19,7 @@ const PostStats: FC<PostStatsProps> = ({ post, userId }) => {
 	const [likes, setLikes] = useState<string[]>(likesList);
 	const [isSaved, setIsSaved] = useState(false);
 
-	const { mutate: likePost, isPending: isPendingLike } = useLikePost();
+	const { mutate: likePost } = useLikePost();
 	const { data: currentUser, isPending: isPendingUser } = useGetCurrentUser();
 	const { mutate: savePost } = useSavePost();
 	const { mutate: deleteSavePost } = useDeleteSavedPost();
@@ -61,23 +64,21 @@ const PostStats: FC<PostStatsProps> = ({ post, userId }) => {
 
 	return (
 		<div className={`flex-between z-20 px-2 ${containerStyles} `}>
-			{!isPendingLike && (
-				<div className="mr-5 flex gap-2">
-					<img
-						src={
-							checkIsLiked(likes, userId)
-								? "/assets/icons/liked.svg"
-								: "/assets/icons/like.svg"
-						}
-						alt="like"
-						width={20}
-						height={20}
-						onClick={(e) => handleLikePost(e)}
-						className="cursor-pointer"
-					/>
-					<p className="small-medium lg:base-medium">{likes.length}</p>
-				</div>
-			)}
+			<div className="mr-5 flex gap-2">
+				<img
+					src={
+						checkIsLiked(likes, userId)
+							? "/assets/icons/liked.svg"
+							: "/assets/icons/like.svg"
+					}
+					alt="like"
+					width={20}
+					height={20}
+					onClick={(e) => handleLikePost(e)}
+					className="cursor-pointer"
+				/>
+				<p className="small-medium lg:base-medium">{likes.length}</p>
+			</div>
 
 			{!isPendingUser && (
 				<div className="flex gap-2">

@@ -1,5 +1,5 @@
 import { Loader, PostCard } from "@/components";
-import { useGetRecentPosts } from "@/queries/post.query.ts";
+import { useGetRecentPosts } from "@/queries";
 
 const HomePage = () => {
 	const {

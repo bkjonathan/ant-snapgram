@@ -1,7 +1,7 @@
 import { FC, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "antd";
-import { useSignOut } from "@/queries/auth.query.ts";
+import { useSignOut } from "@/queries";
 import { useAuth } from "@/hooks";
 
 const TopBar: FC = () => {
@@ -13,7 +13,7 @@ const TopBar: FC = () => {
 		if (isSuccess) {
 			navigate(0);
 		}
-	}, [isSuccess]);
+	}, [isSuccess, navigate]);
 
 	return (
 		<section className={"top-bar"}>
