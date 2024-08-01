@@ -50,7 +50,6 @@ export async function getCurrentUser() {
 			[Query.equal("accountId", currentAccount.$id)],
 		);
 
-		console.log({ currentUser }, "from auth provider");
 		if (!currentUser?.documents.length) {
 			throw new Error("User not found in database");
 		}

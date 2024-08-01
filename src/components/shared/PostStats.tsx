@@ -1,7 +1,9 @@
-import { FC, MouseEvent, useState } from "react";
+import { FC, MouseEvent, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Models } from "appwrite";
 import { useLikePost } from "@/queries/post.query.ts";
+import { useGetCurrentUser } from "@/queries/auth.query.ts";
+import { useDeleteSavedPost, useSavePost } from "@/queries/save.query.ts";
 
 type PostStatsProps = {
 	post: Models.Document;
@@ -12,8 +14,17 @@ const PostStats: FC<PostStatsProps> = ({ post, userId }) => {
 	const likesList = post.likes.map((user: Models.Document) => user.$id);
 
 	const [likes, setLikes] = useState<string[]>(likesList);
+	const [isSaved, setIsSaved] = useState(false);
 
-	const { mutate: likePost } = useLikePost();
+	const { mutate: likePost, isPending: isPendingLike } = useLikePost();
+	const { data: currentUser, isPending: isPendingUser } = useGetCurrentUser();
+	const { mutate: savePost } = useSavePost();
+	const { mutate: deleteSavePost } = useDeleteSavedPost();
+
+	const savedPostRecord = currentUser?.saves.find(
+		(record: Models.Document) => record.post.$id === post.$id,
+	);
+
 	const checkIsLiked = (likeList: string[], userId: string) => {
 		return likeList.includes(userId);
 	};
@@ -30,37 +41,56 @@ const PostStats: FC<PostStatsProps> = ({ post, userId }) => {
 		likePost({ postId: post.$id, likesArray });
 	}
 
+	function handleSavePost(e: MouseEvent<HTMLImageElement>) {
+		e.stopPropagation();
+		if (savedPostRecord) {
+			setIsSaved(false);
+			return deleteSavePost(savedPostRecord.$id);
+		}
+
+		savePost({ userId: userId, postId: post.$id });
+		setIsSaved(true);
+	}
 	const containerStyles = location.pathname.startsWith("/profile")
 		? "w-full"
 		: "";
 
+	useEffect(() => {
+		setIsSaved(!!savedPostRecord);
+	}, [currentUser, savedPostRecord]);
+
 	return (
 		<div className={`flex-between z-20 px-2 ${containerStyles} `}>
-			<div className="mr-5 flex gap-2">
-				<img
-					src={
-						checkIsLiked(likes, userId)
-							? "/assets/icons/liked.svg"
-							: "/assets/icons/like.svg"
-					}
-					alt="like"
-					width={20}
-					height={20}
-					onClick={(e) => handleLikePost(e)}
-					className="cursor-pointer"
-				/>
-				<p className="small-medium lg:base-medium">{likes.length}</p>
-			</div>
+			{!isPendingLike && (
+				<div className="mr-5 flex gap-2">
+					<img
+						src={
+							checkIsLiked(likes, userId)
+								? "/assets/icons/liked.svg"
+								: "/assets/icons/like.svg"
+						}
+						alt="like"
+						width={20}
+						height={20}
+						onClick={(e) => handleLikePost(e)}
+						className="cursor-pointer"
+					/>
+					<p className="small-medium lg:base-medium">{likes.length}</p>
+				</div>
+			)}
 
-			<div className="flex gap-2">
-				<img
-					src="/assets/icons/saved.svg"
-					alt="share"
-					width={20}
-					height={20}
-					className="cursor-pointer"
-				/>
-			</div>
+			{!isPendingUser && (
+				<div className="flex gap-2">
+					<img
+						src={isSaved ? "/assets/icons/saved.svg" : "/assets/icons/save.svg"}
+						alt="share"
+						width={20}
+						height={20}
+						className="cursor-pointer"
+						onClick={(e) => handleSavePost(e)}
+					/>
+				</div>
+			)}
 		</div>
 	);
 };

@@ -64,3 +64,14 @@ export async function likePost(postId: string, likesArray: string[]) {
 		},
 	);
 }
+
+export function deletePost(postId: string, imageId: string) {
+	return Promise.all([
+		database.deleteDocument(
+			appWriteConfig.databaseId,
+			appWriteConfig.postCollectionId,
+			postId,
+		),
+		deleteFile(imageId),
+	]);
+}
