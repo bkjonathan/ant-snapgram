@@ -1,8 +1,16 @@
 import { Link } from "react-router-dom";
 import { formatRelativeTime } from "@/utils";
 import PostStats from "./PostStats.tsx";
+import { Models } from "appwrite";
+import { useAuth } from "@/hooks";
 
-const PostCard = ({ post }: any) => {
+type PostCardProps = {
+	post: Models.Document;
+};
+
+const PostCard = ({ post }: PostCardProps) => {
+	const { user } = useAuth();
+	if (!post.creator) return;
 	return (
 		<div className="post-card">
 			<div className="flex-between">
@@ -34,7 +42,9 @@ const PostCard = ({ post }: any) => {
 					</div>
 				</div>
 
-				<Link to={`/update-post/${post.$id}`}>
+				<Link
+					to={`/update-post/${post.$id}`}
+					className={`${user.id !== post.creator.$id && "hidden"}`}>
 					<img
 						src={"/assets/icons/edit.svg"}
 						alt="edit"
@@ -63,7 +73,7 @@ const PostCard = ({ post }: any) => {
 				/>
 			</Link>
 
-			<PostStats post={post} userId={"12"} />
+			<PostStats post={post} userId={user.id} />
 		</div>
 	);
 };

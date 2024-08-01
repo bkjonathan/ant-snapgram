@@ -53,3 +53,14 @@ export async function getRecentPosts() {
 		[Query.orderDesc("$createdAt"), Query.limit(10)],
 	);
 }
+
+export async function likePost(postId: string, likesArray: string[]) {
+	return await database.updateDocument(
+		appWriteConfig.databaseId,
+		appWriteConfig.postCollectionId,
+		postId,
+		{
+			likes: likesArray,
+		},
+	);
+}
