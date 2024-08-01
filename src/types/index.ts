@@ -5,7 +5,7 @@ import {
 	IUpdateUser,
 	IAuthContextType,
 } from "./user.type.ts";
-import { INewPost } from "@/types/post.type.ts";
+import { INewPost, IUpdatePost } from "@/types/post.type.ts";
 
 export type {
 	IUser,
@@ -14,4 +14,5 @@ export type {
 	IUpdateUser,
 	IAuthContextType,
 	INewPost,
+	IUpdatePost,
 };

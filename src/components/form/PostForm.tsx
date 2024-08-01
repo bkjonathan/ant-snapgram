@@ -4,8 +4,8 @@ import { useAuth, useNotification } from "@/hooks";
 import { Button, Form, FormProps, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import FileUploader from "@/components/shared/FileUploader.tsx";
-import { useCreatePost } from "@/queries/post.query.ts";
-import { INewPost } from "@/types";
+import { useCreatePost, useUpdatePost } from "@/queries";
+import { IUpdatePost } from "@/types";
 import { ERROR_CREATE_POST_NOTIFICATION_OPTIONS } from "@/constants";
 import { Loader } from "@/components";
 
@@ -22,7 +22,8 @@ const PostForm = ({ post, action }: PostFormProps) => {
 
 	const { mutateAsync: createPost, isPending: isPendingCreate } =
 		useCreatePost();
-
+	const { mutateAsync: updatePost, isPending: isPendingUpdate } =
+		useUpdatePost();
 	const initialValues = {
 		caption: post ? post.caption : "",
 		file: [],
@@ -30,7 +31,17 @@ const PostForm = ({ post, action }: PostFormProps) => {
 		tags: post ? post.tags.join(",") : "",
 	};
 
-	const handleFinish: FormProps<INewPost>["onFinish"] = async (values) => {
+	const handleFinish: FormProps<IUpdatePost>["onFinish"] = async (values) => {
+		if (post && action === "Update") {
+			await updatePost({
+				...values,
+				postId: post.$id,
+				imageId: post.imageId,
+				imageUrl: post.imageUrl,
+			});
+
+			return navigate(`/posts/${post.$id}`);
+		}
 		const newPost = await createPost({
 			...values,
 			userId: user?.id,
@@ -91,9 +102,9 @@ const PostForm = ({ post, action }: PostFormProps) => {
 					type="primary"
 					className={"w-full p-6"}
 					htmlType="submit"
-					disabled={isPendingCreate}>
+					disabled={isPendingCreate || isPendingUpdate}>
 					<div className={"flex gap-3"}>
-						{isPendingCreate && <Loader />}
+						{(isPendingCreate || isPendingUpdate) && <Loader />}
 						{action} Post
 					</div>
 				</Button>

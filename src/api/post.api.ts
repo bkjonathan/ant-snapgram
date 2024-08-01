@@ -1,4 +1,4 @@
-import { INewPost } from "@/types";
+import { INewPost, IUpdatePost } from "@/types";
 import { deleteFile, getFilePreview, uploadFile } from "@/api/file.api.ts";
 import { database } from "@/api/appwrite.ts";
 import { appWriteConfig } from "@/config";
@@ -54,6 +54,73 @@ export async function getRecentPosts() {
 	);
 }
 
+export async function getPostById(postId: string) {
+	return await database.getDocument(
+		appWriteConfig.databaseId,
+		appWriteConfig.postCollectionId,
+		postId,
+	);
+}
+
+export async function updatePost(post: IUpdatePost) {
+	const hasFileToUpdate = post.file.length > 0;
+
+	let image = {
+		imageUrl: post.imageUrl,
+		imageId: post.imageId,
+	};
+
+	if (hasFileToUpdate) {
+		const uploadedFile = await uploadFile(post.file[0]);
+
+		if (!uploadedFile) {
+			throw new Error("Failed to upload file");
+		}
+
+		const fileUrl = getFilePreview(uploadedFile.$id);
+
+		if (!fileUrl) {
+			await deleteFile(uploadedFile.$id);
+			throw new Error("Failed to get file url");
+		}
+
+		image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id };
+	}
+
+	// Convert tags into array
+	const tags = post.tags?.replace(/ /g, "").split(",") || [];
+
+	//  Update post
+	const updatedPost = await database.updateDocument(
+		appWriteConfig.databaseId,
+		appWriteConfig.postCollectionId,
+		post.postId,
+		{
+			caption: post.caption,
+			imageUrl: image.imageUrl,
+			imageId: image.imageId,
+			location: post.location,
+			tags: tags,
+		},
+	);
+
+	// Failed to update
+	if (!updatedPost) {
+		// Delete new file that has been recently uploaded
+		if (hasFileToUpdate) {
+			await deleteFile(image.imageId);
+		}
+
+		// If no new file uploaded, just throw error
+		throw Error;
+	}
+	// Safely delete old file after successful update
+	if (hasFileToUpdate) {
+		await deleteFile(post.imageId);
+	}
+
+	return updatedPost;
+}
 export async function likePost(postId: string, likesArray: string[]) {
 	return await database.updateDocument(
 		appWriteConfig.databaseId,

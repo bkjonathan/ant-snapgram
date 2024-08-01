@@ -1,8 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { INewPost } from "@/types";
+import { INewPost, IUpdatePost } from "@/types";
 import { createPost } from "@/api";
 import { QUERY_KEYS } from "@/constants";
-import { getRecentPosts, likePost } from "@/api/post.api.ts";
+import {
+	getPostById,
+	getRecentPosts,
+	likePost,
+	updatePost,
+} from "@/api/post.api.ts";
 
 export const useGetRecentPosts = () => {
 	return useQuery({
@@ -19,6 +24,25 @@ export const useCreatePost = () => {
 				queryKey: [QUERY_KEYS.GET_RECENT_POSTS],
 			});
 		},
+	});
+};
+
+export const useUpdatePost = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (post: IUpdatePost) => updatePost(post),
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({
+				queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.$id],
+			});
+		},
+	});
+};
+export const useGetPostById = (postId?: string) => {
+	return useQuery({
+		queryKey: [QUERY_KEYS.GET_POST_BY_ID, postId],
+		queryFn: () => getPostById(postId || ""),
+		enabled: !!postId,
 	});
 };
 
