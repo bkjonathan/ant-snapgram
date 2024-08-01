@@ -22,7 +22,7 @@ export const NAV_LISTS = [
 		label: "Save",
 	},
 	{
-		to: "/create",
+		to: "/create-post",
 		icon: <PlusOutlined className="text-xl text-white" />,
 		label: "Create",
 	},

@@ -44,3 +44,5 @@ export const withErrorHandling = <T, Args extends unknown[]>(
 		}
 	};
 };
+
+export const convertFileToUrl = (file: File) => URL.createObjectURL(file);
