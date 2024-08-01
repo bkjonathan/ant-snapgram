@@ -8,6 +8,7 @@ import { useCreatePost, useUpdatePost } from "@/queries";
 import { IUpdatePost } from "@/types";
 import { ERROR_CREATE_POST_NOTIFICATION_OPTIONS } from "@/constants";
 import { Loader } from "@/components";
+import { withErrorHandling } from "@/utils";
 
 type PostFormProps = {
 	post?: Models.Document;
@@ -31,27 +32,30 @@ const PostForm = ({ post, action }: PostFormProps) => {
 		tags: post ? post.tags.join(",") : "",
 	};
 
-	const handleFinish: FormProps<IUpdatePost>["onFinish"] = async (values) => {
-		if (post && action === "Update") {
-			await updatePost({
+	const handleFinish: FormProps<IUpdatePost>["onFinish"] = withErrorHandling(
+		async (values) => {
+			if (post && action === "Update") {
+				await updatePost({
+					...values,
+					postId: post.$id,
+					imageId: post.imageId,
+					imageUrl: post.imageUrl,
+				});
+
+				return navigate(`/posts/${post.$id}`);
+			}
+			const newPost = await createPost({
 				...values,
-				postId: post.$id,
-				imageId: post.imageId,
-				imageUrl: post.imageUrl,
+				userId: user?.id,
 			});
 
-			return navigate(`/posts/${post.$id}`);
-		}
-		const newPost = await createPost({
-			...values,
-			userId: user?.id,
-		});
-
-		if (!newPost) {
-			return notification?.open(ERROR_CREATE_POST_NOTIFICATION_OPTIONS);
-		}
-		navigate("/");
-	};
+			if (!newPost) {
+				return notification?.open(ERROR_CREATE_POST_NOTIFICATION_OPTIONS);
+			}
+			navigate("/");
+		},
+		notification,
+	);
 
 	const fileChange = (files: File[]) => {
 		console.log("files", files);
