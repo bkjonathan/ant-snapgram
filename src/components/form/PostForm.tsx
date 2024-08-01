@@ -1,9 +1,13 @@
 import { Models } from "appwrite";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks";
-import { Button, Form, Input } from "antd";
+import { useAuth, useNotification } from "@/hooks";
+import { Button, Form, FormProps, Input } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import FileUploader from "@/components/shared/FileUploader.tsx";
+import { useCreatePost } from "@/queries/post.query.ts";
+import { INewPost } from "@/types";
+import { ERROR_CREATE_POST_NOTIFICATION_OPTIONS } from "@/constants";
+import { Loader } from "@/components";
 
 type PostFormProps = {
 	post?: Models.Document;
@@ -14,6 +18,10 @@ const PostForm = ({ post, action }: PostFormProps) => {
 	const navigate = useNavigate();
 	const { user } = useAuth();
 	const [form] = Form.useForm();
+	const notification = useNotification();
+
+	const { mutateAsync: createPost, isPending: isPendingCreate } =
+		useCreatePost();
 
 	const initialValues = {
 		caption: post ? post.caption : "",
@@ -22,9 +30,16 @@ const PostForm = ({ post, action }: PostFormProps) => {
 		tags: post ? post.tags.join(",") : "",
 	};
 
-	const handleFinish = (values) => {
-		console.log("values", values);
-		// onSubmit(values);
+	const handleFinish: FormProps<INewPost>["onFinish"] = async (values) => {
+		const newPost = await createPost({
+			...values,
+			userId: user?.id,
+		});
+
+		if (!newPost) {
+			return notification?.open(ERROR_CREATE_POST_NOTIFICATION_OPTIONS);
+		}
+		navigate("/");
 	};
 
 	const fileChange = (files: File[]) => {
@@ -72,8 +87,15 @@ const PostForm = ({ post, action }: PostFormProps) => {
 			</Form.Item>
 
 			<Form.Item>
-				<Button type="primary" className={"w-full p-6"} htmlType="submit">
-					{action} Post
+				<Button
+					type="primary"
+					className={"w-full p-6"}
+					htmlType="submit"
+					disabled={isPendingCreate}>
+					<div className={"flex gap-3"}>
+						{isPendingCreate && <Loader />}
+						{action} Post
+					</div>
 				</Button>
 			</Form.Item>
 		</Form>
