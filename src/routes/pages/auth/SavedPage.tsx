@@ -1,56 +1,44 @@
-import { Loader, PostCard } from "@/components";
+import { GridPostList, Loader } from "@/components";
 import { useGetCurrentUser } from "@/queries";
 import { Models } from "appwrite";
 
 const SavePage = () => {
-	const {
-		data: currentUser,
-		isPending: isPostLoading,
-		isError: isErrorPosts,
-	} = useGetCurrentUser();
+	const { data: currentUser } = useGetCurrentUser();
 
 	console.log(currentUser);
-	if (isErrorPosts) {
-		return (
-			<div className="flex flex-1">
-				<div className="home-container">
-					<p className="body-medium text-light-1">Something bad happened</p>
-				</div>
-			</div>
-		);
-	}
+	const savePosts = currentUser?.saves
+		.map((savePost: Models.Document) => ({
+			...savePost.post,
+			creator: {
+				imageUrl: currentUser.imageUrl,
+				name: currentUser.name,
+			},
+		}))
+		.reverse();
 	return (
-		<div className="flex flex-1">
-			<div className="home-container">
-				<div className="home-posts">
-					<h2 className="h3-bold md:h2-bold w-full text-left">Home Feed</h2>
-					{isPostLoading && !currentUser ? (
-						<Loader />
-					) : (
-						<div className="flex-center h-full w-full">
-							<ul className="flex w-full flex-1 flex-col gap-9">
-								{currentUser?.saves?.map((user: Models.Document) => {
-									if (user.post) {
-										user.post = {
-											...user.post,
-											creator: user,
-											likes: [],
-										};
-									}
-									return (
-										<li
-											key={user.post.$id}
-											className="flex w-full justify-center">
-											{/*{JSON.stringify(user.post)}*/}
-											<PostCard post={user.post} />
-										</li>
-									);
-								})}
-							</ul>
-						</div>
-					)}
-				</div>
+		<div className="saved-container">
+			<div className="flex w-full max-w-5xl gap-2">
+				<img
+					src="/assets/icons/save.svg"
+					width={36}
+					height={36}
+					alt="edit"
+					className="invert-white"
+				/>
+				<h2 className="h3-bold md:h2-bold w-full text-left">Saved Posts</h2>
 			</div>
+
+			{!currentUser ? (
+				<Loader />
+			) : (
+				<ul className="flex w-full max-w-5xl justify-center gap-9">
+					{savePosts.length === 0 ? (
+						<p className="text-light-4">No available posts</p>
+					) : (
+						<GridPostList posts={savePosts} showStats={false} />
+					)}
+				</ul>
+			)}
 		</div>
 	);
 };

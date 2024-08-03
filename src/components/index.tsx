@@ -6,6 +6,7 @@ import BottomBar from "./shared/BottomBar.tsx";
 import PostForm from "@/components/form/PostForm.tsx";
 import LeftSideBar from "@/components/shared/LeftSideBar.tsx";
 import UserCard from "@/components/shared/UserCard.tsx";
+import GridPostList from "./shared/GridPostList.tsx";
 
 export {
 	BottomBar,
@@ -16,4 +17,5 @@ export {
 	PostForm,
 	LeftSideBar,
 	UserCard,
+	GridPostList,
 };
