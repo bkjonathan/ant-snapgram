@@ -17,7 +17,7 @@ export const NAV_LISTS = [
 		label: "Explore",
 	},
 	{
-		to: "/save",
+		to: "/saved",
 		icon: <SaveOutlined className="text-xl text-white" />,
 		label: "Save",
 	},

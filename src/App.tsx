@@ -8,6 +8,7 @@ import SignUpPage from "@/routes/pages/guest/SignUpPage.tsx";
 import CreatePage from "@/routes/pages/auth/CreatePage.tsx";
 import EditPage from "@/routes/pages/auth/EditPage.tsx";
 import DetailPage from "@/routes/pages/auth/DetailPage.tsx";
+import SavedPage from "@/routes/pages/auth/SavedPage.tsx";
 
 const App: FC = () => {
 	return (
@@ -22,7 +23,7 @@ const App: FC = () => {
 				<Route element={<AuthLayout />}>
 					<Route index element={<HomePage />} />
 					<Route path="/explore" element={<HomePage />} />
-					<Route path="/saved" element={<HomePage />} />
+					<Route path="/saved" element={<SavedPage />} />
 					<Route path="/all-users" element={<HomePage />} />
 					<Route path="/create-post" element={<CreatePage />} />
 					<Route path="/update-post/:id" element={<EditPage />} />

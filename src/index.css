@@ -121,7 +121,7 @@
   }
 
   .home-creators {
-    @apply hidden xl:flex flex-col w-72 2xl:w-465 px-6 py-10 gap-10  overflow-scroll custom-scrollbar;
+    @apply hidden xl:flex flex-col w-72 2xl:w-465 px-6 gap-4 overflow-scroll custom-scrollbar bg-white;
   }
 
   /* Bottom bar */
@@ -132,6 +132,11 @@
   /* Topbar */
   .top-bar {
     @apply sticky top-0 z-50 md:hidden bg-dark-2 w-full;
+  }
+
+  /* User card */
+  .user-card {
+    @apply flex-center flex-col gap-4 border border-dark-4 rounded-[20px] px-5 py-8;
   }
 
   /* Post Details */
@@ -270,4 +275,14 @@
   .shad-button_ghost {
     @apply flex gap-4 items-center justify-start hover:bg-transparent hover:text-white !important;
   }
+}
+
+.preformatted-post {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  font-family: monospace;
+  white-space: pre-wrap; /* Allows wrapping of long lines */
+  word-wrap: break-word; /* Prevents overflow */
 }

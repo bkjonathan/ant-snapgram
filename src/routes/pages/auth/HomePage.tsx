@@ -1,5 +1,6 @@
-import { Loader, PostCard } from "@/components";
+import { Loader, PostCard, UserCard } from "@/components";
 import { useGetRecentPosts } from "@/queries";
+import { useGetUsers } from "@/queries/auth.query.ts";
 
 const HomePage = () => {
 	const {
@@ -8,7 +9,14 @@ const HomePage = () => {
 		isError: isErrorPosts,
 	} = useGetRecentPosts();
 
-	if (isErrorPosts) {
+	const {
+		data: creators,
+		isLoading: isUserLoading,
+		isError: isErrorCreators,
+	} = useGetUsers(10);
+
+	console.log(creators, "from creator");
+	if (isErrorPosts || isErrorCreators) {
 		return (
 			<div className="flex flex-1">
 				<div className="home-container">
@@ -36,6 +44,21 @@ const HomePage = () => {
 						</div>
 					)}
 				</div>
+			</div>
+
+			<div className="home-creators">
+				<h3 className="h3-bold mt-5">Top Creators</h3>
+				{isUserLoading && !creators ? (
+					<Loader />
+				) : (
+					<ul className="grid gap-6 2xl:grid-cols-2">
+						{creators?.documents.map((creator) => (
+							<li key={creator?.$id}>
+								<UserCard user={creator} />
+							</li>
+						))}
+					</ul>
+				)}
 			</div>
 		</div>
 	);

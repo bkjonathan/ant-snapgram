@@ -5,6 +5,7 @@ import PostStats from "./shared/PostStats.tsx";
 import BottomBar from "./shared/BottomBar.tsx";
 import PostForm from "@/components/form/PostForm.tsx";
 import LeftSideBar from "@/components/shared/LeftSideBar.tsx";
+import UserCard from "@/components/shared/UserCard.tsx";
 
 export {
 	BottomBar,
@@ -14,4 +15,5 @@ export {
 	TopBar,
 	PostForm,
 	LeftSideBar,
+	UserCard,
 };

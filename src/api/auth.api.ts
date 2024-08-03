@@ -37,6 +37,25 @@ export async function signInAccount(user: ISignInUser) {
 	return await account.createEmailPasswordSession(user.email, user.password);
 }
 
+export async function getUsers(limit: number) {
+	try {
+		const queries: string[] = [Query.orderDesc("$createdAt")];
+
+		if (limit) {
+			queries.push(Query.limit(limit));
+		}
+
+		return await database.listDocuments(
+			appWriteConfig.databaseId,
+			appWriteConfig.userCollectionId,
+			queries,
+		);
+	} catch (error) {
+		console.error("Error getting users:", error);
+		throw new Error("Failed to get users");
+	}
+}
+
 export async function getCurrentUser() {
 	try {
 		const currentAccount = await account.get();
