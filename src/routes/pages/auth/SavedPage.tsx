@@ -5,7 +5,6 @@ import { Models } from "appwrite";
 const SavePage = () => {
 	const { data: currentUser } = useGetCurrentUser();
 
-	console.log(currentUser);
 	const savePosts = currentUser?.saves
 		.map((savePost: Models.Document) => ({
 			...savePost.post,

@@ -2,7 +2,7 @@ import { INewPost, IUpdatePost } from "@/types";
 import { deleteFile, getFilePreview, uploadFile } from "@/api/file.api.ts";
 import { database } from "@/api/appwrite.ts";
 import { appWriteConfig } from "@/config";
-import { ID, Query } from "appwrite";
+import { ID, Models, Query } from "appwrite";
 
 export async function createPost(payload: INewPost) {
 	// Upload file to appwrite storage
@@ -141,4 +141,21 @@ export function deletePost(postId: string, imageId: string) {
 		),
 		deleteFile(imageId),
 	]);
+}
+
+export async function getInfinitePosts({
+	pageParam,
+}: {
+	pageParam: number;
+}): Promise<Models.DocumentList<Models.Document>> {
+	const queries: string[] = [Query.orderDesc("$updatedAt"), Query.limit(9)];
+
+	if (pageParam) {
+		queries.push(Query.cursorAfter(pageParam.toString()));
+	}
+	return await database.listDocuments(
+		appWriteConfig.databaseId,
+		appWriteConfig.postCollectionId,
+		queries,
+	);
 }
